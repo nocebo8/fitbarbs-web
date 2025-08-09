@@ -1,0 +1,27 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    var externalSchemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
+}
+
+@*
+    Custom override: render nothing when no external providers are configured,
+    so users do not see the default instructional message.
+*@
+
+@if (externalSchemes.Any())
+{
+    <h3>Lub skorzystaj z usług zewnętrznych</h3>
+    <hr />
+    <div class="d-flex flex-wrap gap-2">
+        @foreach (var scheme in externalSchemes)
+        {
+            <form method="post" asp-page="./ExternalLogin" asp-route-provider="@scheme.Name" asp-route-returnUrl="~/" class="d-inline">
+                <button type="submit" class="btn btn-outline-brand">@scheme.DisplayName</button>
+            </form>
+        }
+    </div>
+}
+
+

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FitBarbs.Web.Data;
 using FitBarbs.Web.Services;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// In development, allow insecure cookies so login works over HTTP (localhost)
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        options.LoginPath = "/Identity/Account/Login";
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    });
+}
 
 // Increase multipart/form-data limits for large video uploads (up to 2GB)
 builder.Services.Configure<FormOptions>(options =>
@@ -41,12 +53,16 @@ else
     app.UseHsts();
 }
 
-// Always enforce HTTPS redirection
-app.UseHttpsRedirection();
+// In development, allow HTTP to simplify local testing
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -54,6 +70,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// Ensure database is up to date and seed required data
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+}
 await DbSeeder.SeedAsync(app.Services);
 
 app.Run();

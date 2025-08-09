@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 440 440" role="img" aria-labelledby="title desc">
+  <title id="title">Instruktorka – abstrakcyjna aura</title>
+  <desc id="desc">Miękka, rozmyta kula w barwach marki, sugerująca spokój i ruch</desc>
+  <defs>
+    <radialGradient id="orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#A78BFA" stop-opacity="0.75"/>
+      <stop offset="80%" stop-color="#EC4899" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#2EC4B6" stop-opacity="0.9"/>
+    </radialGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <g filter="url(#blur)">
+    <circle cx="220" cy="220" r="170" fill="url(#orb)"/>
+  </g>
+  <path d="M80 230c40 40 80 60 140 60s100-20 140-60" fill="none" stroke="#fff" stroke-opacity="0.8" stroke-width="6" stroke-linecap="round"/>
+</svg>
+
+

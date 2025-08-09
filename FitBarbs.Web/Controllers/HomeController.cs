@@ -30,6 +30,24 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet("/Pricing")]
+    public IActionResult Pricing()
+    {
+        return View();
+    }
+
+    [HttpGet("/Oferta")]
+    public IActionResult Oferta()
+    {
+        return View();
+    }
+
+    [HttpGet("/Blog")]
+    public IActionResult Blog()
+    {
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

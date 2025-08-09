@@ -48,13 +48,11 @@ public class HomeController : Controller
         return View();
     }
 
-    [HttpGet("/o-nas")]
     public IActionResult ONas()
     {
         return View();
     }
 
-    [HttpGet("/kontakt")]
     public IActionResult Kontakt()
     {
         return View();

@@ -5,7 +5,7 @@
     </a>
 
     <nav class="hidden md:flex items-center gap-6 text-[15px]">
-      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Oferta","Home")">Oferta</a>
+      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("ONas","Home")">O nas</a>
       <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Index","Courses")">Kursy</a>
       <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Pricing","Home")">Cennik</a>
       <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Blog","Home")">Blog</a>
@@ -35,10 +35,11 @@
 
   <div id="mobile-menu" class="md:hidden hidden border-t border-black/5">
     <div class="px-4 py-3 flex flex-col gap-2">
-      <a href="@Url.Action("Oferta","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Oferta</a>
+      <a href="@Url.Action("ONas","Home")" class="py-2 text-neutral-900 hover:text-violet-700">O nas</a>
       <a href="@Url.Action("Index","Courses")" class="py-2 text-neutral-900 hover:text-violet-700">Kursy</a>
       <a href="@Url.Action("Pricing","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Cennik</a>
       <a href="@Url.Action("Blog","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Blog</a>
+      <a href="@Url.Action("Kontakt","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Kontakt</a>
       @if (User.IsInRole(FitBarbs.Web.Models.ApplicationRoles.Instructor)) {
         <a href="~/Instructor/Dashboard" class="py-2 text-neutral-900 hover:text-violet-700">Panel instruktora</a>
       }

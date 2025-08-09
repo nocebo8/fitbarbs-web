@@ -78,6 +78,16 @@ app.MapControllerRoute(
     defaults: new { controller = "Home", action = "Privacy" });
 
 app.MapControllerRoute(
+    name: "onas_short",
+    pattern: "o-nas",
+    defaults: new { controller = "Home", action = "ONas" });
+
+app.MapControllerRoute(
+    name: "kontakt_short",
+    pattern: "kontakt",
+    defaults: new { controller = "Home", action = "Kontakt" });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();

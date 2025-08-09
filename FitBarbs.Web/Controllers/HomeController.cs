@@ -1,21 +1,28 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FitBarbs.Web.Models;
+using FitBarbs.Web.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitBarbs.Web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _db;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
     {
         _logger = logger;
+        _db = db;
     }
 
     public IActionResult Index()
     {
-        return View();
+        var featured = _db.Courses.Include(c => c.Lessons)
+            .OrderBy(c => c.Difficulty).ThenBy(c => c.Title).Take(6).ToList();
+        var vm = new HomeViewModel { FeaturedCourses = featured };
+        return View(vm);
     }
 
     public IActionResult Privacy()

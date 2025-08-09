@@ -1,5 +1,6 @@
-﻿@{
-    ViewData["Title"] = "FitBarbs";
+﻿@model FitBarbs.Web.Models.HomeViewModel
+@{
+    ViewData["Title"] = "fitBarbs – pilates wideo";
 }
 
 <section class="hero mb-5">
@@ -7,11 +8,19 @@
     <div class="hero__overlay"></div>
     <div class="hero__content">
         <div class="container">
-            <div class="row">
-                <div class="col-12 col-lg-8">
-                    <h1>Trenuj pilates w swoim tempie z Barbie</h1>
-                    <p>Spersonalizowane ścieżki nauki, lekcje wideo i progres dopasowany do Twojego tempa. Od początkujących po zaawansowanych.</p>
-                    <a href="@Url.Action("Index","Courses")" class="btn btn-primary btn-lg mt-3">Przeglądaj kursy</a>
+            <div class="row align-items-center g-4">
+                <div class="col-12 col-lg-7 fade-up">
+                    <div class="glass">
+                        <h1 class="display-4 fw-bold">Pilates wideo dla każdego — ćwicz gdzie i kiedy chcesz</h1>
+                        <p class="mt-3 text-hero-sub">Profesjonalne lekcje i plany treningowe prowadzone przez Barbie. Poziomy od podstaw do zaawansowanych, dostępne na każdym urządzeniu.</p>
+                        <div class="mt-4 d-flex gap-2">
+                            <a href="@Url.Action("Index","Courses")" class="btn btn-primary btn-lg">Rozpocznij ćwiczyć</a>
+                            <a href="@Url.Action("Index","Courses")" class="btn btn-outline-brand btn-lg">Zobacz kursy</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5 text-center fade-up">
+                    <img src="~/img/hero_pilates.svg" alt="Sylwetka pilates" class="img-fluid" loading="lazy" />
                 </div>
             </div>
         </div>
@@ -23,23 +32,49 @@
 
 <section class="container section">
     <div class="row g-4">
-        <div class="col-12 col-md-4">
-            <div class="p-4 rounded-4 card-dark h-100">
-                <h5>Elastyczne tempo</h5>
-                <p>Ustal dzienny cel minut i ucz się w rytmie dopasowanym do Twojego dnia.</p>
+        <div class="col-12 col-md-3 text-center">
+            <div class="p-4 rounded-4 border h-100">
+                <div class="mb-2">🏁</div>
+                <h6 class="mb-1">Plany treningowe</h6>
+                <p class="text-muted small m-0">Cele na różne poziomy i potrzeby.</p>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="p-4 rounded-4 card-dark h-100">
-                <h5>Poziomy zaawansowania</h5>
-                <p>Kursy dla początkujących, średniozaawansowanych i zaawansowanych – rośnij wraz z postępami.</p>
+        <div class="col-12 col-md-3 text-center">
+            <div class="p-4 rounded-4 border h-100">
+                <div class="mb-2">🎥</div>
+                <h6 class="mb-1">Wideo HD</h6>
+                <p class="text-muted small m-0">Jasny obraz, wyraźne instrukcje.</p>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="p-4 rounded-4 card-dark h-100">
-                <h5>Wideo w wysokiej jakości</h5>
-                <p>Starannie przygotowane lekcje wideo prowadzone przez Barbie, dostępne 24/7.</p>
+        <div class="col-12 col-md-3 text-center">
+            <div class="p-4 rounded-4 border h-100">
+                <div class="mb-2">📈</div>
+                <h6 class="mb-1">Różne poziomy</h6>
+                <p class="text-muted small m-0">Od podstaw do zaawansowanych.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-3 text-center">
+            <div class="p-4 rounded-4 border h-100">
+                <div class="mb-2">📱</div>
+                <h6 class="mb-1">Ćwicz gdzie chcesz</h6>
+                <p class="text-muted small m-0">Telefon, tablet lub komputer.</p>
             </div>
         </div>
     </div>
 </section>
+
+<section class="container section">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h4 m-0">Polecane kursy</h2>
+        <a class="btn btn-link" href="@Url.Action("Index","Courses")">Zobacz wszystkie</a>
+    </div>
+    <div class="row g-4">
+        @foreach (var c in Model.FeaturedCourses)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                @await Html.PartialAsync("~/Views/Shared/Components/CourseCard/Default.cshtml", c)
+            </div>
+        }
+    </div>
+</section>
+

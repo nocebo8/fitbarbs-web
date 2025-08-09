@@ -13,36 +13,30 @@
     <link rel="stylesheet" href="~/FitBarbs.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 p-2 bg-white border rounded" href="#main">Skip to content</a>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light nav-blur border-bottom mb-3" style="border-color: var(--fb-border) !important;">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FitBarbs.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+        <nav class="navbar sticky-top navbar-light bg-white border-bottom shadow-sm" style="border-color: var(--fb-border) !important; z-index:1030;">
+            <div class="container-fluid d-flex align-items-center justify-content-between">
+                <a class="navbar-brand fw-semibold m-0" asp-area="" asp-controller="Home" asp-action="Index">fitBarbs</a>
+                <ul class="navbar-nav d-flex flex-row gap-3 m-0">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Kursy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">Mój profil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Instructor" asp-action="Dashboard">Panel instruktora</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+                        <li class="nav-item"><a class="nav-link text-dark" href="#o-nas">O nas</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" href="#kontakt">Kontakt</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                        <a class="btn btn-primary" asp-controller="Courses" asp-action="Index">Zacznij ćwiczyć</a>
+                        <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main id="main" role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>

@@ -1,7 +1,7 @@
 @model FitBarbs.Web.Models.Course
 
-<article class="card overflow-hidden">
-  <div class="relative aspect-video bg-[color:var(--fb-border)]">
+<article class="card overflow-hidden shadow-sm" style="isolation:isolate">
+  <div class="relative aspect-video bg-[color:var(--fb-border)]" style="z-index:0">
     @if (!string.IsNullOrWhiteSpace(Model.ThumbnailPath))
     {
         <img src="@Model.ThumbnailPath" alt="Miniatura kursu @Model.Title" class="h-full w-full object-cover" loading="lazy" />
@@ -12,7 +12,7 @@
     }
     <div class="absolute left-3 top-3 badge">@Model.Difficulty</div>
   </div>
-  <div class="p-4">
+  <div class="p-4" style="position:relative; z-index:1; background:#fff">
     <h3 class="text-lg font-semibold tracking-tight mb-1">@Model.Title</h3>
     <p class="text-sm text-[color:var(--fb-muted)] line-clamp-2">@Model.Description</p>
     <div class="mt-3 flex items-center justify-between">

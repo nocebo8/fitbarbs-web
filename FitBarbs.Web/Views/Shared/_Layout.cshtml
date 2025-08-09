@@ -10,40 +10,50 @@
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <meta name="color-scheme" content="dark light">
-    <link rel="stylesheet" href="~/FitBarbs.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
     <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 p-2 bg-white border rounded" href="#main">Skip to content</a>
     <header>
-        <nav class="navbar sticky-top navbar-light bg-white border-bottom shadow-sm" style="border-color: var(--fb-border) !important; z-index:1030;">
-            <div class="container-fluid d-flex align-items-center justify-content-between">
-                <a class="navbar-brand fw-semibold m-0" asp-area="" asp-controller="Home" asp-action="Index">fitBarbs</a>
-                <ul class="navbar-nav d-flex flex-row gap-3 m-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Kursy</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="#o-nas">O nas</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="#kontakt">Kontakt</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-2">
+        <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-white border-bottom shadow-sm" style="z-index:1050;">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/img/fitBarbs_logo.svg" alt="fitBarbs" height="28" asp-append-version="true" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="navMain" class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Courses" asp-action="Index">Kursy</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#o-nas">O nas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#kontakt">Kontakt</a></li>
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Profile" asp-action="Index">Mój profil</a></li>
+                        }
+                        @if (User.IsInRole("Instructor"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Instructor" asp-action="Dashboard">Panel instruktora</a></li>
+                        }
+                    </ul>
+                    <div class="d-flex align-items-center gap-2 ms-sm-3">
                         <a class="btn btn-primary" asp-controller="Courses" asp-action="Index">Zacznij ćwiczyć</a>
                         <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
-        <main id="main" role="main" class="pb-3">
+        <main id="main" role="main" class="py-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer py-4">
         <div class="container">
-            &copy; 2025 - FitBarbs.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            @await Html.PartialAsync("_FooterLinks")
+            <div class="mt-3 small">&copy; 2025 - fitBarbs</div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

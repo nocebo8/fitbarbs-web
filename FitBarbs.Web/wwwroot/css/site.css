@@ -26,7 +26,8 @@ body {
   color: #0A0A0A;
   text-align: left;
   background-color: #ffffff;
-  margin-bottom: 60px;
+  padding-top: 0; /* sticky, not fixed navbar → no offset needed */
+  padding-bottom: 0;
 }
 
 .btn-primary {
@@ -46,14 +47,43 @@ body {
 }
 .btn-outline-brand:hover { background-color: #FCE7F3; color: #c02679; border-color: #c02679; }
 
-.hero { position: relative; border-radius: 28px; overflow: hidden; background: #fff; box-shadow: 0 30px 60px rgba(0,0,0,.08); }
-.hero__media { position: absolute; inset: 0; background: radial-gradient(1200px 800px at 20% 10%, #fde2f2 0%, rgba(253,226,242,0.9) 30%, rgba(243,232,255,0.85) 70%, rgba(255,255,255,0.9) 100%); }
-.hero__overlay { position: absolute; inset: 0; background: radial-gradient(900px 500px at 80% 20%, rgba(167,139,250,.15), rgba(255,255,255,0)); }
-.hero__content { position: relative; z-index: 2; padding: clamp(2rem, 5vw, 4rem); }
+.hero { border-radius: 28px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.08);
+  background: radial-gradient(1200px 800px at 20% 10%, #fde2f2 0%, rgba(253,226,242,0.9) 30%, rgba(243,232,255,0.85) 70%, rgba(255,255,255,0.95) 100%);
+}
+.hero__media, .hero__overlay { display: none; }
+.hero__content { padding: clamp(2rem, 5vw, 4rem); }
 .glass { background: rgba(255,255,255,.40); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 16px; padding: 1.5rem; }
 .text-hero-sub { color: rgba(0,0,0,.8); }
 .fade-up { opacity: 0; transform: translateY(12px); animation: fadeUp .6s ease-out .05s forwards; }
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* Accessibility: visible focus */
+:focus-visible { outline: 3px solid #ec4899; outline-offset: 2px; border-radius: 8px; }
+
+/* Footer */
+.footer { color: rgba(0,0,0,.72) !important; position: relative; z-index: 1; background: #fff; }
+.footer a { color: #0A0A0A; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* Navbar explicit colors for visibility on white */
+.navbar .navbar-brand, .navbar .nav-link { color: #0A0A0A !important; }
+.navbar .nav-link:hover, .navbar .nav-link:focus { color: #111111 !important; }
+
+/* Fix Tailwind vs Bootstrap: Tailwind defines .collapse { visibility: collapse }.
+   This breaks Bootstrap's navbar/menu collapse. Force Bootstrap behavior. */
+.collapse { visibility: visible !important; }
+.collapse:not(.show) { display: none !important; }
+.collapsing { height: 0; overflow: hidden; transition: height .35s ease; }
+
+/* Section spacing to avoid crowding footer */
+.section { margin-top: 3rem; margin-bottom: 3rem; clear: both; }
+
+/* Ensure footer never overlays content */
+main { display: block; }
+main::after { content: ""; display: block; height: 40px; }
+
+/* Force stable navbar layout (no collapse overriding) */
+/* (reverted) Do not force navbar layout; use Bootstrap defaults */
 .hero h1 { font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 1rem; }
 .hero p { font-size: clamp(1.1rem, 2.4vw, 1.35rem); opacity: .92; }
 .section { margin-top: 3rem; }

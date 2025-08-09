@@ -25,4 +25,27 @@
     </Content>
   </ItemGroup>
 
+  <!-- Trigger dotnet-watch on Tailwind sources -->
+  <ItemGroup>
+    <Watch Include="Styles/**" />
+    <Watch Include="tailwind.config.js" />
+    <Watch Include="postcss.config.js" />
+  </ItemGroup>
+
+  <!-- Ensure npm deps and build Tailwind automatically on build/run -->
+  <Target Name="EnsureNpm" BeforeTargets="Build" Condition="!Exists('$(MSBuildProjectDirectory)/node_modules')">
+    <Message Text="Installing npm dependencies..." Importance="high" />
+    <Exec Command="npm ci" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="TailwindBuild" BeforeTargets="Build">
+    <Message Text="Building Tailwind CSS..." Importance="low" />
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <!-- During dotnet watch, rebuild Tailwind on every file change -->
+  <Target Name="TailwindBuildOnWatch" BeforeTargets="RazorCoreCompile;ResolveStaticWebAssets" Condition="'$(DOTNET_WATCH)'=='1'">
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
 </Project>

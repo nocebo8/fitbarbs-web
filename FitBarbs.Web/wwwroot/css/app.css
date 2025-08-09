@@ -732,6 +732,10 @@ body {
   animation: shimmer 1.4s infinite;
 }
 
+.collapse {
+  visibility: collapse;
+}
+
 .static {
   position: static;
 }
@@ -804,6 +808,10 @@ body {
   margin-top: 1rem;
 }
 
+.me-auto {
+  margin-inline-end: auto;
+}
+
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -837,10 +845,6 @@ body {
 
 .w-full {
   width: 100%;
-}
-
-.flex-row {
-  flex-direction: row;
 }
 
 .flex-wrap {
@@ -903,6 +907,11 @@ body {
 
 .p-4 {
   padding: 1rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .pb-3 {

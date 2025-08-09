@@ -1,8 +1,45 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "FitBarbs";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero mb-5">
+    <div class="hero__media"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <h1>Trenuj pilates w swoim tempie z Barbie</h1>
+                    <p>Spersonalizowane ścieżki nauki, lekcje wideo i progres dopasowany do Twojego tempa. Od początkujących po zaawansowanych.</p>
+                    <a href="@Url.Action("Index","Courses")" class="btn btn-primary btn-lg mt-3">Przeglądaj kursy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="padding-top:48%"></div>
+    <!-- aspect ratio spacer -->
+    
+</section>
+
+<section class="container section">
+    <div class="row g-4">
+        <div class="col-12 col-md-4">
+            <div class="p-4 rounded-4 card-dark h-100">
+                <h5>Elastyczne tempo</h5>
+                <p>Ustal dzienny cel minut i ucz się w rytmie dopasowanym do Twojego dnia.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="p-4 rounded-4 card-dark h-100">
+                <h5>Poziomy zaawansowania</h5>
+                <p>Kursy dla początkujących, średniozaawansowanych i zaawansowanych – rośnij wraz z postępami.</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="p-4 rounded-4 card-dark h-100">
+                <h5>Wideo w wysokiej jakości</h5>
+                <p>Starannie przygotowane lekcje wideo prowadzone przez Barbie, dostępne 24/7.</p>
+            </div>
+        </div>
+    </div>
+</section>

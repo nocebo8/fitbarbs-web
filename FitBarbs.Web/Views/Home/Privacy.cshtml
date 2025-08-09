@@ -1,6 +1,27 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Polityka prywatności";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-5">
+  <h1 class="mb-3">Polityka prywatności</h1>
+  <p class="text-muted">To jest strona-wydmuszka polityki prywatności. Treść zostanie uzupełniona na dalszym etapie prac.</p>
+
+  <hr />
+
+  <h2 class="h5 mt-4">1. Administrator danych</h2>
+  <p class="text-muted">Tutaj umieścimy informacje o administratorze danych.</p>
+
+  <h2 class="h5 mt-4">2. Zakres i cel przetwarzania</h2>
+  <p class="text-muted">Opis zakresu oraz celów przetwarzania danych.</p>
+
+  <h2 class="h5 mt-4">3. Prawa użytkownika</h2>
+  <ul class="text-muted">
+    <li>Dostęp do danych</li>
+    <li>Sprostowanie</li>
+    <li>Usunięcie</li>
+    <li>Ograniczenie przetwarzania</li>
+    <li>Sprzeciw</li>
+  </ul>
+
+  <p class="small text-muted mt-4">Ostatnia aktualizacja: @DateTime.UtcNow.ToString("yyyy-MM-dd")</p>
+</div>

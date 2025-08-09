@@ -65,6 +65,18 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Enable attribute-routed controllers (e.g., [HttpGet("/privacy")])
+app.MapControllers();
+
+// Fallback redirect for lowercase URL (kept only if attribute route isn't hit in some environments)
+// Note: Avoid duplicate route definitions
+app.MapGet("/privacy-fallback", () => Results.Redirect("/Home/Privacy"));
+
+app.MapControllerRoute(
+    name: "privacy_short",
+    pattern: "privacy",
+    defaults: new { controller = "Home", action = "Privacy" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

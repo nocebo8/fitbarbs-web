@@ -5,10 +5,10 @@
     </a>
 
     <nav class="hidden md:flex items-center gap-6 text-[15px]">
-      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="~/Oferta">Oferta</a>
-      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="~/Courses">Kursy</a>
-      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="~/Pricing">Cennik</a>
-      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="~/Blog">Blog</a>
+      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Oferta","Home")">Oferta</a>
+      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Index","Courses")">Kursy</a>
+      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Pricing","Home")">Cennik</a>
+      <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="@Url.Action("Blog","Home")">Blog</a>
       @if (User.IsInRole(FitBarbs.Web.Models.ApplicationRoles.Instructor)) {
         <a class="text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 rounded-lg" href="~/Instructor/Dashboard">Panel instruktora</a>
       }
@@ -17,7 +17,7 @@
     <div class="ml-auto hidden md:flex items-center gap-3">
       @if (User?.Identity?.IsAuthenticated ?? false) {
         <span class="px-3 py-2 text-neutral-700">@User.Identity!.Name</span>
-        <a href="~/Manage" class="px-3 py-2 rounded-xl text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600">Konto</a>
+        <a href="@Url.Action("Index","Profile")" class="px-3 py-2 rounded-xl text-neutral-900 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600">Konto</a>
         <form method="post" action="~/Identity/Account/Logout">
           <button type="submit" class="px-3 py-2 rounded-xl hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600">Wyloguj</button>
         </form>
@@ -35,16 +35,16 @@
 
   <div id="mobile-menu" class="md:hidden hidden border-t border-black/5">
     <div class="px-4 py-3 flex flex-col gap-2">
-      <a href="~/Oferta" class="py-2 text-neutral-900 hover:text-violet-700">Oferta</a>
-      <a href="~/Courses" class="py-2 text-neutral-900 hover:text-violet-700">Kursy</a>
-      <a href="~/Pricing" class="py-2 text-neutral-900 hover:text-violet-700">Cennik</a>
-      <a href="~/Blog" class="py-2 text-neutral-900 hover:text-violet-700">Blog</a>
+      <a href="@Url.Action("Oferta","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Oferta</a>
+      <a href="@Url.Action("Index","Courses")" class="py-2 text-neutral-900 hover:text-violet-700">Kursy</a>
+      <a href="@Url.Action("Pricing","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Cennik</a>
+      <a href="@Url.Action("Blog","Home")" class="py-2 text-neutral-900 hover:text-violet-700">Blog</a>
       @if (User.IsInRole(FitBarbs.Web.Models.ApplicationRoles.Instructor)) {
         <a href="~/Instructor/Dashboard" class="py-2 text-neutral-900 hover:text-violet-700">Panel instruktora</a>
       }
       @if (User?.Identity?.IsAuthenticated ?? false) {
         <span class="py-2 text-neutral-700">@User.Identity!.Name</span>
-        <a href="~/Manage" class="py-2 text-neutral-900 hover:text-violet-700">Konto</a>
+        <a href="@Url.Action("Index","Profile")" class="py-2 text-neutral-900 hover:text-violet-700">Konto</a>
         <form method="post" action="~/Identity/Account/Logout"><button class="py-2 text-left hover:text-violet-700">Wyloguj</button></form>
       } else {
         <a href="~/Identity/Account/Login" class="py-2 text-neutral-900 hover:text-violet-700">Zaloguj</a>

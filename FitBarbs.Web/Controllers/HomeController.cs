@@ -48,6 +48,12 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet("/Regulamin")]
+    public IActionResult Regulamin()
+    {
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

@@ -1,0 +1,35 @@
+# .NET build artefacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS Code
+.idea/
+.vs/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# SQLite and local data
+FitBarbs.Web/app.db
+*.db-shm
+*.db-wal
+
+# Uploaded media (keep folders, ignore files)
+FitBarbs.Web/wwwroot/uploads/videos/*
+FitBarbs.Web/wwwroot/uploads/thumbs/*
+!FitBarbs.Web/wwwroot/uploads/.gitkeep
+!FitBarbs.Web/wwwroot/uploads/videos/.gitkeep
+!FitBarbs.Web/wwwroot/uploads/thumbs/.gitkeep
+
+# Secrets
+**/secrets.json
+**/*.secret*
+*.pfx
+
+

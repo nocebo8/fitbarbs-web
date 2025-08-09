@@ -1,0 +1,32 @@
+@model FitBarbs.Web.Models.Course
+@using FitBarbs.Web.Models
+
+<h2>Nowy kurs</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Tytuł</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Opis</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Poziom trudności</label>
+        <select asp-for="Difficulty" asp-items="Html.GetEnumSelectList<DifficultyLevel>()" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Miniatura (jpg/png/webp)</label>
+        <input type="file" name="thumbnail" accept="image/*" class="form-control" />
+        <span asp-validation-for="ThumbnailPath" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+    
+</form>
+
+<partial name="_ValidationScriptsPartial" />
+
+

@@ -1,0 +1,77 @@
+@model FitBarbs.Web.Models.ProfileViewModel
+@using FitBarbs.Web.Models
+
+<h2>Mój profil</h2>
+
+@if (TempData["Saved"] != null)
+{
+    <div class="alert alert-success">Zapisano ustawienia.</div>
+}
+
+<form method="post">
+    <div class="mb-3" style="max-width: 320px;">
+        <label class="form-label">Docelowy czas nauki (min/dzień)</label>
+        <input asp-for="Profile.TargetDailyMinutes" type="number" class="form-control" min="5" max="240" />
+        <span asp-validation-for="Profile.TargetDailyMinutes" class="text-danger"></span>
+    </div>
+    <div class="mb-3" style="max-width: 320px;">
+        <label class="form-label">Preferowany poziom</label>
+        <select asp-for="Profile.PreferredDifficulty" asp-items="Html.GetEnumSelectList<DifficultyLevel>()" class="form-select"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
+
+<partial name="_ValidationScriptsPartial" />
+
+<hr />
+<h3>Moje kursy</h3>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var e in Model.MyEnrollments)
+    {
+        var progress = Model.ProgressByCourseId.ContainsKey(e.CourseId) ? Model.ProgressByCourseId[e.CourseId] : 0;
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@e.Course?.Title</h5>
+                    <p class="card-text">@e.Course?.Description</p>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width:@progress%">@progress%</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-outline-primary" href="@Url.Action("Details", "Courses", new { id = e.CourseId })">Przejdź</a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (!Model.MyEnrollments.Any())
+    {
+        <div>Brak zapisów.</div>
+    }
+</div>
+
+<hr />
+<h3>Polecane dla Ciebie</h3>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var course in Model.RecommendedCourses)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@course.Title</h5>
+                    <p class="card-text">@course.Description</p>
+                    <span class="badge bg-secondary">@course.Difficulty</span>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-outline-primary" href="@Url.Action("Details", "Courses", new { id = course.Id })">Zobacz</a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (!Model.RecommendedCourses.Any())
+    {
+        <div>Brak rekomendacji.</div>
+    }
+</div>
+
+

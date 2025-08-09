@@ -1,0 +1,31 @@
+@model IEnumerable<FitBarbs.Web.Models.Course>
+
+<h2>Panel instruktora</h2>
+<a class="btn btn-success mb-3" href="@Url.Action("Create", "Courses")">Nowy kurs</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Poziom</th>
+            <th>Lekcje</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Title</td>
+                <td>@c.Difficulty</td>
+                <td>@c.Lessons.Count</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Details", "Courses", new { id = c.Id })">Szczegóły</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    
+</table>
+
+

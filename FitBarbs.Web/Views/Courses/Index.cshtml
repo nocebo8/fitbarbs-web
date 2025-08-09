@@ -1,0 +1,45 @@
+@model IEnumerable<FitBarbs.Web.Models.Course>
+@using FitBarbs.Web.Models
+
+<h2>Kursy Pilates</h2>
+
+<form method="get" class="mb-3">
+    <label for="level">Poziom: </label>
+    <select id="level" name="level" class="form-select" style="max-width: 250px; display:inline-block">
+        <option value="">Wszystkie</option>
+        <option value="@DifficultyLevel.Beginner">Początkujący</option>
+        <option value="@DifficultyLevel.Intermediate">Średniozaawansowany</option>
+        <option value="@DifficultyLevel.Advanced">Zaawansowany</option>
+    </select>
+    <button class="btn btn-primary ms-2" type="submit">Filtruj</button>
+    @if (User.IsInRole(ApplicationRoles.Instructor))
+    {
+        <a class="btn btn-success ms-2" href="@Url.Action("Create")">Dodaj kurs</a>
+    }
+    
+    
+</form>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var course in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                @if (!string.IsNullOrWhiteSpace(course.ThumbnailPath))
+                {
+                    <img src="@course.ThumbnailPath" class="card-img-top" alt="miniatura" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@course.Title</h5>
+                    <p class="card-text">@course.Description</p>
+                    <span class="badge bg-secondary">@course.Difficulty</span>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-outline-primary" href="@Url.Action("Details", new { id = course.Id })">Zobacz</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+

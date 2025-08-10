@@ -1,3 +1,19 @@
+## Build artifacts
+**/bin/
+**/obj/
+
+## Publish output (should not be versioned)
+FitBarbs.Web/publish/
+
+## Runtime uploads (user content)
+FitBarbs.Web/wwwroot/uploads/
+
+## Node/Tailwind
+FitBarbs.Web/node_modules/
+FitBarbs.Web/wwwroot/lib/
+
+## OS
+.DS_Store
 # .NET build artefacts
 bin/
 obj/

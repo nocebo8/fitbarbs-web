@@ -3,55 +3,55 @@
 }
 
 <section class="container py-5">
-  <div class="row align-items-center g-4">
-    <div class="col-12 col-md-7">
-      <h1 class="display-5 fw-bold mb-3">Kim jest fitBarbs?</h1>
-      <p class="lead text-muted">fitBarbs to przestrzeń z treningami pilates online, którą stworzyliśmy, aby ułatwić codzienny ruch — bez presji, za to z uśmiechem i mądrą progresją.</p>
-      <p class="text-muted">Zbudowaliśmy bibliotekę kursów wideo dla różnych poziomów zaawansowania: od podstaw, przez średniozaawansowany, aż po wyzwania dla zaawansowanych. Naszą misją jest <strong>bezpieczny i skuteczny ruch</strong>, który dopasujesz do swojego dnia.</p>
+  <div class="grid grid-cols-1 md:grid-cols-12 items-center gap-4">
+    <div class="md:col-span-7">
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Kim jest fitBarbs?</h1>
+      <p class="text-lg text-[color:var(--fb-muted)]">fitBarbs to przestrzeń z treningami pilates online, którą stworzyliśmy, aby ułatwić codzienny ruch — bez presji, za to z uśmiechem i mądrą progresją.</p>
+      <p class="text-[color:var(--fb-muted)]">Zbudowaliśmy bibliotekę kursów wideo dla różnych poziomów zaawansowania: od podstaw, przez średniozaawansowany, aż po wyzwania dla zaawansowanych. Naszą misją jest <strong>bezpieczny i skuteczny ruch</strong>, który dopasujesz do swojego dnia.</p>
 
-      <div class="row g-3 mt-3">
-        <div class="col-6 col-lg-3">
-          <div class="p-3 rounded-4 border text-center h-100">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+        <div>
+          <div class="p-3 rounded-2xl border text-center h-100">
             <div class="h4 m-0">25+</div>
-            <div class="small text-muted">kursów</div>
+            <div class="text-sm text-[color:var(--fb-muted)]">kursów</div>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="p-3 rounded-4 border text-center h-100">
+        <div>
+          <div class="p-3 rounded-2xl border text-center h-100">
             <div class="h4 m-0">300+</div>
-            <div class="small text-muted">lekcji</div>
+            <div class="text-sm text-[color:var(--fb-muted)]">lekcji</div>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="p-3 rounded-4 border text-center h-100">
+        <div>
+          <div class="p-3 rounded-2xl border text-center h-100">
             <div class="h4 m-0">10k+</div>
-            <div class="small text-muted">minut wideo</div>
+            <div class="text-sm text-[color:var(--fb-muted)]">minut wideo</div>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="p-3 rounded-4 border text-center h-100">
+        <div>
+          <div class="p-3 rounded-2xl border text-center h-100">
             <div class="h4 m-0">5k+</div>
-            <div class="small text-muted">ćwiczących</div>
+            <div class="text-sm text-[color:var(--fb-muted)]">ćwiczących</div>
           </div>
         </div>
       </div>
 
-      <div class="d-flex gap-2 mt-4">
-        <a href="@Url.Action("Index","Courses")" class="btn btn-primary">Zobacz kursy</a>
-        <a href="@Url.Action("Kontakt","Home")" class="btn btn-outline-brand">Skontaktuj się</a>
+      <div class="flex gap-2 mt-4">
+        <a href="@Url.Action("Index","Courses")" class="btn-primary">Zobacz kursy</a>
+        <a href="@Url.Action("Kontakt","Home")" class="btn-secondary">Skontaktuj się</a>
       </div>
     </div>
-    <div class="col-12 col-md-5 text-center">
+    <div class="md:col-span-5 text-center">
       <img src="~/img/instructor_orb.svg" alt="Instruktorka pilates" class="img-fluid" style="max-width:260px" loading="lazy" />
     </div>
   </div>
 </section>
 
 <section class="container py-4">
-  <div class="row g-4">
-    <div class="col-12 col-lg-6">
-      <div class="p-4 rounded-4 border h-100">
-        <h2 class="h4">Nasze wartości</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div>
+      <div class="p-4 rounded-2xl border h-100">
+        <h2 class="text-xl font-semibold">Nasze wartości</h2>
         <ul class="mt-2 text-muted">
           <li><strong>Bezpieczeństwo</strong> — dbamy o technikę i zdrowy ruch.</li>
           <li><strong>Konsekwencja</strong> — krótkie lekcje, które łatwo wpleść w dzień.</li>
@@ -60,11 +60,11 @@
         </ul>
       </div>
     </div>
-    <div class="col-12 col-lg-6">
-      <div class="p-4 rounded-4 border h-100">
-        <h2 class="h4">Instruktorka</h2>
-        <p class="text-muted">Barbie — certyfikowana instruktorka pilates, 8 lat doświadczenia, setki przeprowadzonych treningów. Specjalizuje się w pracy z osobami początkującymi i wracającymi do aktywności.</p>
-        <ul class="small text-muted m-0">
+    <div>
+      <div class="p-4 rounded-2xl border h-100">
+        <h2 class="text-xl font-semibold">Instruktorka</h2>
+        <p class="text-[color:var(--fb-muted)]">Barbie — certyfikowana instruktorka pilates, 8 lat doświadczenia, setki przeprowadzonych treningów. Specjalizuje się w pracy z osobami początkującymi i wracającymi do aktywności.</p>
+        <ul class="text-sm text-[color:var(--fb-muted)] m-0">
           <li>Certyfikat Matwork Pilates</li>
           <li>Szkolenia z anatomii i prehabu</li>
           <li>Programy dla kręgosłupa i core</li>
@@ -76,31 +76,31 @@
 
 <section class="container py-4">
   <h2 class="h4 mb-3">Opinie</h2>
-  <div class="row g-3">
-    <div class="col-12 col-md-6">
-      <div class="p-4 rounded-4 border h-100">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div>
+      <div class="p-4 rounded-2xl border h-100">
         <p class="m-0">„Ćwiczę 20 minut dziennie i plecy przestały boleć. Lekcje są jasne i motywujące.”</p>
-        <div class="small text-muted mt-2">— Kasia, 34 lata</div>
+        <div class="text-sm text-[color:var(--fb-muted)] mt-2">— Kasia, 34 lata</div>
       </div>
     </div>
-    <div class="col-12 col-md-6">
-      <div class="p-4 rounded-4 border h-100">
+    <div>
+      <div class="p-4 rounded-2xl border h-100">
         <p class="m-0">„Wreszcie mam plan na cały tydzień. Widzę postęp z tygodnia na tydzień.”</p>
-        <div class="small text-muted mt-2">— Ola, 29 lat</div>
+        <div class="text-sm text-[color:var(--fb-muted)] mt-2">— Ola, 29 lat</div>
       </div>
     </div>
   </div>
 </section>
 
 <section class="container py-4">
-  <div class="p-4 rounded-4 border d-flex flex-wrap align-items-center justify-content-between gap-3">
+  <div class="p-4 rounded-2xl border flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h2 class="h5 m-0">Gotowa na pierwszy trening?</h2>
-      <div class="text-muted small">Przejrzyj kursy i wybierz poziom dla siebie.</div>
+      <h2 class="text-lg font-semibold m-0">Gotowa na pierwszy trening?</h2>
+      <div class="text-sm text-[color:var(--fb-muted)]">Przejrzyj kursy i wybierz poziom dla siebie.</div>
     </div>
-    <a href="@Url.Action("Index","Courses")" class="btn btn-primary">Przeglądaj kursy</a>
+    <a href="@Url.Action("Index","Courses")" class="btn-primary">Przeglądaj kursy</a>
   </div>
-  <p class="small text-muted text-end mt-2">Ostatnia aktualizacja: @DateTime.UtcNow.ToString("yyyy-MM-dd")</p>
+  <p class="text-sm text-[color:var(--fb-muted)] text-end mt-2">Ostatnia aktualizacja: @DateTime.UtcNow.ToString("yyyy-MM-dd")</p>
 </section>
 
 

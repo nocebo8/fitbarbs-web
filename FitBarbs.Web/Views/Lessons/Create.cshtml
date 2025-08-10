@@ -6,21 +6,21 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="CourseId" />
     <div class="mb-3">
-        <label class="form-label">Tytuł</label>
-        <input asp-for="Title" class="form-control" />
+        <label class="block text-sm font-medium mb-1">Tytuł</label>
+        <input asp-for="Title" class="w-full rounded-xl border border-[var(--fb-border)] px-3 py-2" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label class="form-label">Opis</label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+        <label class="block text-sm font-medium mb-1">Opis</label>
+        <textarea asp-for="Description" class="w-full rounded-xl border border-[var(--fb-border)] px-3 py-2"></textarea>
     </div>
     <div class="mb-3">
-        <label class="form-label">Wideo (mp4)</label>
-        <input type="file" name="video" accept="video/*" class="form-control" />
+        <label class="block text-sm font-medium mb-1">Wideo (mp4)</label>
+        <input type="file" name="video" accept="video/*" class="w-full rounded-xl border border-[var(--fb-border)] px-3 py-2" />
         <span asp-validation-for="VideoPath" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Zapisz</button>
-    <a href="@Url.Action("Details", "Courses", new { id = Model.CourseId })" class="btn btn-secondary">Anuluj</a>
+    <button type="submit" class="btn-primary">Zapisz</button>
+    <a href="@Url.Action("Details", "Courses", new { id = Model.CourseId })" class="btn-secondary">Anuluj</a>
 </form>
 
 <partial name="_ValidationScriptsPartial" />

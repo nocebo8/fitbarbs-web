@@ -3,16 +3,16 @@
 
 <h2>@Model.Title</h2>
 <p>@Model.Description</p>
-<p><span class="badge bg-secondary">@Model.Difficulty</span></p>
+<p><span class="badge">@Model.Difficulty</span></p>
 
 @if (User.IsInRole(ApplicationRoles.Instructor))
 {
-    <a class="btn btn-success" href="@Url.Action("Create", "Lessons", new { courseId = Model.Id })">Dodaj lekcję</a>
+    <a class="btn-primary" href="@Url.Action("Create", "Lessons", new { courseId = Model.Id })">Dodaj lekcję</a>
 }
 else if (User.Identity?.IsAuthenticated ?? false)
 {
     <form method="post" action="@Url.Action("Enroll", "Enrollments", new { courseId = Model.Id })" style="display:inline">
-        <button class="btn btn-primary" type="submit">Zapisz się</button>
+        <button class="btn-primary" type="submit">Zapisz się</button>
     </form>
 }
 
@@ -21,20 +21,20 @@ else if (User.Identity?.IsAuthenticated ?? false)
 {
     <div class="alert alert-danger">Wystąpiły błędy: @string.Join(", ", ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))</div>
 }
-<ul class="list-group">
+<ul class="list-none p-0 m-0">
     @foreach (var lesson in Model.Lessons.OrderBy(l => l.OrderIndex))
     {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="py-2 px-3 border-b border-[var(--fb-border)] flex items-center justify-between">
             <div>
                 <strong>@lesson.OrderIndex. @lesson.Title</strong>
                 <div class="text-muted">@lesson.Description</div>
             </div>
-            <a class="btn btn-outline-primary" href="@Url.Action("Watch", "Lessons", new { id = lesson.Id })">Oglądaj</a>
+            <a class="btn-secondary" href="@Url.Action("Watch", "Lessons", new { id = lesson.Id })">Oglądaj</a>
         </li>
     }
     @if (!Model.Lessons.Any())
     {
-        <li class="list-group-item">Brak lekcji w tym kursie.</li>
+        <li class="py-2 px-3">Brak lekcji w tym kursie.</li>
     }
 }
 </ul>

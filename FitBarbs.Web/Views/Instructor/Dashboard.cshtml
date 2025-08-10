@@ -1,10 +1,10 @@
 @model IEnumerable<FitBarbs.Web.Models.Course>
 
 <h2>Panel instruktora</h2>
-<a class="btn btn-success mb-3" href="@Url.Action("Create", "Courses")">Nowy kurs</a>
+<a class="btn-primary mb-3 inline-block" href="@Url.Action("Create", "Courses")">Nowy kurs</a>
 
-<div class="table-responsive">
-<table class="table table-striped align-middle mb-0">
+<div class="overflow-x-auto">
+<table class="table align-middle mb-0 w-full">
     <thead>
         <tr>
             <th>Tytuł</th>
@@ -21,7 +21,7 @@
                 <td>@c.Difficulty</td>
                 <td>@c.Lessons.Count</td>
                 <td>
-                    <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Details", "Courses", new { id = c.Id })">Szczegóły</a>
+                    <a class="btn-secondary" href="@Url.Action("Details", "Courses", new { id = c.Id })">Szczegóły</a>
                 </td>
             </tr>
         }

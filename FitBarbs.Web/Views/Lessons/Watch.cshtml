@@ -6,9 +6,9 @@
 <video controls width="100%" style="max-width: 900px;" src="@Model.VideoPath"></video>
 
 <div class="mt-3">
-    <a class="btn btn-secondary" href="@Url.Action("Details", "Courses", new { id = Model.CourseId })">Wróć do kursu</a>
+    <a class="btn-secondary" href="@Url.Action("Details", "Courses", new { id = Model.CourseId })">Wróć do kursu</a>
     <form method="post" asp-action="Complete" asp-route-id="@Model.Id" style="display:inline">
-        <button type="submit" class="btn btn-primary">Oznacz jako ukończoną</button>
+        <button type="submit" class="btn-primary">Oznacz jako ukończoną</button>
     </form>
 </div>
 

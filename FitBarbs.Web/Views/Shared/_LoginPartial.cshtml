@@ -6,21 +6,21 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-        <a  class="px-3 py-2 rounded-xl hover:bg-black/5" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        <a  class="px-3 py-2 rounded-xl hover:bg-[color:var(--fb-border)]" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
     </li>
     <li class="nav-item">
         <form  class="inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="px-3 py-2 rounded-xl hover:bg-black/5">Logout</button>
+            <button  type="submit" class="px-3 py-2 rounded-xl hover:bg-[color:var(--fb-border)]">Logout</button>
         </form>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="px-3 py-2 rounded-xl hover:bg-black/5" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-[color:var(--fb-border)]" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item">
-        <a class="px-3 py-2 rounded-xl hover:bg-black/5" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-[color:var(--fb-border)]" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
 }
 </ul>

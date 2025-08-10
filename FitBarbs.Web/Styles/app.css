@@ -25,7 +25,8 @@
 @layer components {
   .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand; }
   .btn-primary { @apply btn bg-brand text-white hover:brightness-110 active:brightness-95 shadow-soft; }
-  .btn-secondary { @apply btn bg-brand-soft text-brand hover:bg-brand/10; }
+  /* Secondary button: higher contrast on light background for WCAG AA */
+  .btn-secondary { @apply btn bg-white text-[color:var(--fb-text)] border border-[var(--fb-border)] hover:bg-surface; }
   .btn-ghost { @apply btn bg-transparent text-brand hover:bg-brand-soft; }
 
   .card { @apply rounded-2xl bg-surface shadow-soft border border-[var(--fb-border)]; }
@@ -35,7 +36,7 @@
 
   /* Tooltip */
   .tooltip { @apply relative inline-block cursor-help; }
-  .tooltip .tooltip-content { @apply pointer-events-none absolute left-1/2 -translate-x-1/2 mt-2 whitespace-nowrap rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity; }
+  .tooltip .tooltip-content { @apply pointer-events-none absolute left-1/2 -translate-x-1/2 mt-2 whitespace-nowrap rounded-md px-2 py-1 text-xs text-white opacity-0 transition-opacity; background-color: rgba(17, 24, 39, 0.9); }
   .tooltip:hover .tooltip-content, .tooltip:focus .tooltip-content { @apply opacity-100; }
 
   /* Skeleton */

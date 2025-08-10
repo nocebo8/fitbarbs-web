@@ -2,9 +2,11 @@
 
 <article class="card overflow-hidden shadow-sm" style="isolation:isolate">
   <div class="relative aspect-video bg-[color:var(--fb-border)]" style="z-index:0">
-    @if (!string.IsNullOrWhiteSpace(Model.ThumbnailPath))
+    @{ var firstLessonThumb = (Model.Lessons != null ? Model.Lessons.OrderBy(l => l.OrderIndex).FirstOrDefault(l => !string.IsNullOrWhiteSpace(l.ThumbnailPath))?.ThumbnailPath : null);
+       var courseThumb = !string.IsNullOrWhiteSpace(firstLessonThumb) ? firstLessonThumb : Model.ThumbnailPath; }
+    @if (!string.IsNullOrWhiteSpace(courseThumb))
     {
-        <img src="@Model.ThumbnailPath" alt="Miniatura kursu @Model.Title" class="h-full w-full object-cover" loading="lazy" />
+        <img src="@courseThumb" alt="Miniatura kursu @Model.Title" class="h-full w-full object-cover" loading="lazy" />
     }
     else
     {
@@ -15,7 +17,21 @@
   <div class="p-4" style="position:relative; z-index:1; background:#fff">
     <h3 class="text-lg font-semibold tracking-tight mb-1">@Model.Title</h3>
     <p class="text-sm text-[color:var(--fb-muted)] line-clamp-2">@Model.Description</p>
-    <div class="mt-3 flex items-center justify-between">
+    <div class="mt-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5 overflow-hidden">
+        @if (Model.Lessons != null && Model.Lessons.Any())
+        {
+          foreach (var l in Model.Lessons.OrderBy(x => x.OrderIndex).Take(3))
+          {
+            <img src="@(string.IsNullOrWhiteSpace(l.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : l.ThumbnailPath)"
+                 alt="Miniatura: @l.Title"
+                 class="w-12 aspect-video rounded object-cover bg-[color:var(--fb-border)] select-none"
+                 loading="lazy" decoding="async" fetchpriority="low"
+                 srcset="@(string.IsNullOrWhiteSpace(l.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : l.ThumbnailPath) 1x, @(string.IsNullOrWhiteSpace(l.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : l.ThumbnailPath) 2x"
+                 sizes="48px" />
+          }
+        }
+      </div>
       <a class="btn-primary" href="@Url.Action("Details", "Courses", new { id = Model.Id })">Zobacz</a>
     </div>
   </div>

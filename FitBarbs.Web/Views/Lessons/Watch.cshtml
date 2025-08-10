@@ -1,15 +1,114 @@
-@model FitBarbs.Web.Models.Lesson
+@model FitBarbs.Web.Models.LessonWatchViewModel
 
-<h2>@Model.Title</h2>
-<p>@Model.Description</p>
+@{
+    // Layout sekcji: spójne odstępy i wyśrodkowanie treści
+}
+<section class="container px-4 md:px-6 py-6">
+  @* Nagłówek lekcji: większy tytuł i subtelny opis *@
+  <header>
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">@Model.Lesson.Title</h1>
+        <p class="text-[color:var(--fb-muted)] mt-1">@Model.Lesson.Description</p>
+      </div>
+      <div class="text-sm text-[color:var(--fb-muted)]">Lekcja @Model.CurrentLessonIndex z @Model.TotalLessons</div>
+    </div>
+  </header>
 
-<video controls width="100%" style="max-width: 900px;" src="@Model.VideoPath"></video>
+  @* Responsywne wideo z zaokrągleniami, cieniem i obramowaniem *@
+  <div class="mt-4 mx-auto w-full max-w-5xl rounded-2xl overflow-hidden shadow-soft border border-[var(--fb-border)] bg-[color:var(--fb-border)]">
+    <video id="lesson-video" class="w-full aspect-[16/9]"
+           controls playsinline preload="metadata" poster="@(string.IsNullOrWhiteSpace(Model.Lesson.ThumbnailPath) ? Url.Content("/img/hero_pilates.svg") : Url.Content(Model.Lesson.ThumbnailPath))"
+           src="@Model.Lesson.VideoPath"
+           onended="document.getElementById('auto-complete-form').submit();"></video>
+  </div>
 
-<div class="mt-3">
-    <a class="btn-secondary" href="@Url.Action("Details", "Courses", new { id = Model.CourseId })">Wróć do kursu</a>
-    <form method="post" asp-action="Complete" asp-route-id="@Model.Id" style="display:inline">
-        <button type="submit" class="btn-primary">Oznacz jako ukończoną</button>
+  @* Subtelny pasek postępu kursu *@
+  <div class="mt-3">
+    <div class="h-2 w-full rounded-full bg-[color:var(--fb-border)] overflow-hidden">
+      <div class="h-full bg-brand-soft" style="width:@Model.CompletionPercent%"></div>
+    </div>
+    <div class="mt-1 text-xs text-[color:var(--fb-muted)]">Postęp kursu: @Model.CompletionPercent%</div>
+  </div>
+
+  @* Lista porad do lekcji *@
+  <div class="mt-6">
+    <h2 class="text-lg font-semibold">Porady do lekcji</h2>
+    <ul class="mt-2 list-disc pl-5 space-y-1 text-[color:var(--fb-muted)]">
+      @foreach (var tip in Model.Tips)
+      {
+        <li>@tip</li>
+      }
+    </ul>
+  </div>
+
+  @* Spójna sekcja akcji: przyciski w jednym wierszu, mobilnie zawijane *@
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a class="btn-secondary" href="@Url.Action("Details", "Courses", new { id = Model.Lesson.CourseId })">Wróć do kursu</a>
+    <form id="auto-complete-form" method="post" asp-action="Complete" asp-route-id="@Model.Lesson.Id" class="m-0">
+      <button type="submit" class="btn-primary">Oznacz jako ukończoną</button>
     </form>
-</div>
+  </div>
 
+  <script>
+    (function () {
+      const video = document.getElementById('lesson-video');
+      if (!video) return;
+      // If server-side thumbnail is missing and we can capture a frame, do it client-side and persist
+      const hasServerPoster = !!video.getAttribute('poster') && !video.getAttribute('poster')!.includes('hero_pilates.svg');
+      const canCapture = !!document.createElement('canvas').getContext;
+      const tryCapture = async () => {
+        try {
+          if (hasServerPoster || !canCapture) return;
+          await new Promise((resolve, reject) => {
+            const onLoaded = () => resolve(null);
+            const onErr = () => reject();
+            video.muted = true; // allow draw on some browsers
+            video.currentTime = 1;
+            video.addEventListener('seeked', onLoaded, { once: true });
+            video.addEventListener('error', onErr, { once: true });
+          });
+          const canvas = document.createElement('canvas');
+          const w = video.videoWidth || 1280; const h = video.videoHeight || 720;
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          ctx.drawImage(video, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          const resp = await fetch('@Url.Action("SaveThumbnail","Lessons", new { id = Model.Lesson.Id })', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl })
+          });
+          if (resp.ok) {
+            const { thumbnail } = await resp.json();
+            if (thumbnail) video.setAttribute('poster', thumbnail);
+          }
+        } catch { /* ignore */ }
+      };
+      // Fallback sources (small, broadly supported MP4 samples)
+      const fallbacks = [
+        'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+      ];
+      let idx = 0;
 
+      const tryNext = () => {
+        if (idx >= fallbacks.length) {
+          const msg = document.createElement('div');
+          msg.className = 'mt-2 text-sm text-[color:var(--fb-error)]';
+          msg.textContent = 'Nie udało się odtworzyć wideo. Spróbuj ponownie lub skontaktuj się z nami.';
+          video.parentElement?.appendChild(msg);
+          return;
+        }
+        video.src = fallbacks[idx++];
+        video.load();
+      };
+
+      video.addEventListener('error', tryNext);
+      video.addEventListener('stalled', tryNext);
+      video.addEventListener('abort', tryNext);
+
+      // Kick off capture attempt without blocking playback
+      setTimeout(tryCapture, 300);
+    })();
+  </script>
+</section>

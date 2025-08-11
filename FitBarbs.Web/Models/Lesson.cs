@@ -17,11 +17,18 @@ public class Lesson
     [Required]
     public string VideoPath { get; set; } = string.Empty;
 
+    [MaxLength(500)]
+    public string? ThumbnailPath { get; set; }
+
     public int OrderIndex { get; set; }
 
     [ForeignKey(nameof(Course))]
     public int CourseId { get; set; }
     public Course? Course { get; set; }
+
+    // Optional set of concise tips specific to the lesson
+    [NotMapped]
+    public List<string> Tips { get; set; } = new();
 }
 
 

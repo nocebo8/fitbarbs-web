@@ -55,6 +55,7 @@ namespace FitBarbs.Web.Data.Migrations
                     Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     VideoPath = table.Column<string>(type: "TEXT", nullable: false),
+                    ThumbnailPath = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     OrderIndex = table.Column<int>(type: "INTEGER", nullable: false),
                     CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },

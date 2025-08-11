@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FitBarbs.Web.Controllers;
 
@@ -18,10 +20,45 @@ public class CoursesController : Controller
         _env = env;
     }
 
+    private async Task<string?> TryGenerateVideoThumbnailAsync(string videoPhysicalPath)
+    {
+        try
+        {
+            var thumbnailsDir = Path.Combine(_env.WebRootPath, "uploads", "thumbnails");
+            Directory.CreateDirectory(thumbnailsDir);
+            var fileName = Path.GetFileNameWithoutExtension(videoPhysicalPath);
+            var outputName = $"{fileName}-{Guid.NewGuid():N}.jpg";
+            var thumbPhysicalPath = Path.Combine(thumbnailsDir, outputName);
+
+            using var ffmpeg = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "ffmpeg",
+                    Arguments = $"-y -ss 00:00:01 -i \"{videoPhysicalPath}\" -frames:v 1 -q:v 2 \"{thumbPhysicalPath}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            ffmpeg.Start();
+            var _ = ffmpeg.StandardOutput.ReadToEndAsync();
+            var __ = ffmpeg.StandardError.ReadToEndAsync();
+            var exited = await Task.Run(() => ffmpeg.WaitForExit(20000));
+            if (exited && ffmpeg.ExitCode == 0 && System.IO.File.Exists(thumbPhysicalPath))
+            {
+                return $"/uploads/thumbnails/{outputName}";
+            }
+        }
+        catch { }
+        return null;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index(DifficultyLevel? level)
     {
-        var query = _dbContext.Courses.AsQueryable();
+        var query = _dbContext.Courses.Include(c => c.Lessons).AsQueryable();
         if (level.HasValue)
         {
             query = query.Where(c => c.Difficulty == level.Value);
@@ -37,6 +74,60 @@ public class CoursesController : Controller
             .Include(c => c.Lessons)
             .FirstOrDefaultAsync(c => c.Id == id);
         if (course == null) return NotFound();
+
+        // Ensure thumbnails exist for lessons so list can show real screenshots
+        foreach (var lesson in course.Lessons)
+        {
+            var needs = string.IsNullOrWhiteSpace(lesson.ThumbnailPath) || lesson.ThumbnailPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
+            if (needs && !string.IsNullOrWhiteSpace(lesson.VideoPath))
+            {
+                var physical = lesson.VideoPath.StartsWith("/")
+                    ? Path.Combine(_env.WebRootPath, lesson.VideoPath.TrimStart('/'))
+                    : Path.Combine(_env.WebRootPath, lesson.VideoPath);
+                if (System.IO.File.Exists(physical))
+                {
+                    var thumb = await TryGenerateVideoThumbnailAsync(physical);
+                    if (!string.IsNullOrWhiteSpace(thumb))
+                    {
+                        lesson.ThumbnailPath = thumb;
+                    }
+                }
+            }
+        }
+        await _dbContext.SaveChangesAsync();
+
+        // Compute completed lessons for current user (sequential model)
+        var orderedLessons = course.Lessons.OrderBy(l => l.OrderIndex).ToList();
+        var completedLessonIds = new HashSet<int>();
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var progress = await _dbContext.UserCourseProgresses
+                    .FirstOrDefaultAsync(p => p.CourseId == id && p.UserId == userId);
+                if (progress != null)
+                {
+                    if (progress.CurrentLessonId == null)
+                    {
+                        // All lessons completed
+                        foreach (var lesson in orderedLessons)
+                        {
+                            completedLessonIds.Add(lesson.Id);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var lesson in orderedLessons)
+                        {
+                            if (lesson.Id == progress.CurrentLessonId) break;
+                            completedLessonIds.Add(lesson.Id);
+                        }
+                    }
+                }
+            }
+        }
+        ViewBag.CompletedLessonIds = completedLessonIds;
         return View(course);
     }
 

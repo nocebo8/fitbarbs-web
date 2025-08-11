@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitBarbs.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250808230724_AddLearningModels")]
-    partial class AddLearningModels
+    [Migration("20250810153502_AddLessonThumbnail")]
+    partial class AddLessonThumbnail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.19");
 
             modelBuilder.Entity("FitBarbs.Web.Models.Course", b =>
                 {
@@ -82,6 +82,10 @@ namespace FitBarbs.Web.Data.Migrations
                     b.Property<int>("OrderIndex")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ThumbnailPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -89,10 +93,6 @@ namespace FitBarbs.Web.Data.Migrations
 
                     b.Property<string>("VideoPath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ThumbnailPath")
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -131,6 +131,27 @@ namespace FitBarbs.Web.Data.Migrations
                     b.HasIndex("CurrentLessonId");
 
                     b.ToTable("UserCourseProgresses");
+                });
+
+            modelBuilder.Entity("FitBarbs.Web.Models.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PreferredDifficulty")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TargetDailyMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

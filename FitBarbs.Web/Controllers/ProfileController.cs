@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FitBarbs.Web.Controllers;
 
 [Authorize]
-public class ProfileController : Controller
+public partial class ProfileController : Controller
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
@@ -60,6 +61,36 @@ public class ProfileController : Controller
         await _dbContext.SaveChangesAsync();
         TempData["Saved"] = true;
         return RedirectToAction(nameof(Index));
+    }
+}
+
+// Dev-only endpoints for clearing user progress to simplify manual testing
+[Authorize]
+public partial class ProfileController
+{
+    [HttpPost]
+    [Route("dev/clear-progress")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DevClearProgress(string? email = null)
+    {
+        if (!HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment()) return Forbid();
+        var userManager = HttpContext.RequestServices.GetRequiredService<UserManager<IdentityUser>>();
+        IdentityUser? user = null;
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            user = await userManager.FindByEmailAsync(email);
+        }
+        else
+        {
+            if (!User.Identity?.IsAuthenticated ?? true) return BadRequest("Provide email when not authenticated");
+            user = await userManager.GetUserAsync(User);
+        }
+        if (user == null) return NotFound("User not found");
+        var db = HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+        var progresses = await db.UserCourseProgresses.Where(p => p.UserId == user.Id).ToListAsync();
+        db.UserCourseProgresses.RemoveRange(progresses);
+        await db.SaveChangesAsync();
+        return Ok(new { cleared = progresses.Count, user = user.Email });
     }
 }
 

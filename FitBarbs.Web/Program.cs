@@ -97,6 +97,15 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
+    // Ensure Lessons table has ThumbnailPath even if redundant migrations were removed
+    try
+    {
+        await db.Database.ExecuteSqlRawAsync("ALTER TABLE Lessons ADD COLUMN ThumbnailPath TEXT NULL;");
+    }
+    catch (Exception)
+    {
+        // ignore if column already exists
+    }
 }
 await DbSeeder.SeedAsync(app.Services);
 

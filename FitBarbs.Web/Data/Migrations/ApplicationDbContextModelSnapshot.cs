@@ -15,7 +15,7 @@ namespace FitBarbs.Web.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.19");
 
             modelBuilder.Entity("FitBarbs.Web.Models.Course", b =>
                 {
@@ -78,6 +78,10 @@ namespace FitBarbs.Web.Data.Migrations
 
                     b.Property<int>("OrderIndex")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("ThumbnailPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()

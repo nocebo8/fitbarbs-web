@@ -1,4 +1,6 @@
 @model FitBarbs.Web.Models.LessonWatchViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     // Layout sekcji: spójne odstępy i wyśrodkowanie treści
@@ -17,9 +19,9 @@
 
   @* Responsywne wideo z zaokrągleniami, cieniem i obramowaniem *@
   <div class="mt-4 mx-auto w-full max-w-5xl rounded-2xl overflow-hidden shadow-soft border border-[var(--fb-border)] bg-[color:var(--fb-border)]">
-    <video id="lesson-video" class="w-full aspect-[16/9]"
-           controls playsinline preload="metadata" poster="@(string.IsNullOrWhiteSpace(Model.Lesson.ThumbnailPath) ? Url.Content("/img/hero_pilates.svg") : Url.Content(Model.Lesson.ThumbnailPath))"
-           src="@Model.Lesson.VideoPath"></video>
+    <video id="lesson-video" class="w-full aspect-[16/9]" controls playsinline preload="metadata" poster="@(string.IsNullOrWhiteSpace(Model.Lesson.ThumbnailPath) ? Url.Content("/img/hero_pilates.svg") : Url.Content(Model.Lesson.ThumbnailPath))">
+      <source src="@Model.Lesson.VideoPath" type="video/mp4" />
+    </video>
   </div>
 
   @* Subtelny pasek postępu kursu *@
@@ -46,12 +48,16 @@
     <a class="btn-secondary" href="@Url.Action("Details", "Courses", new { id = Model.Lesson.CourseId })">Wróć do kursu</a>
     @if (Model.IsCompleted)
     {
-      <span class="badge self-center">Ukończona</span>
+      <span class="badge self-center">@Localizer["Ukończona"]</span>
     }
     else
     {
-      <form id="auto-complete-form" method="post" asp-action="Complete" asp-route-id="@Model.Lesson.Id" class="m-0">
-        <button type="submit" class="btn-primary">Oznacz jako ukończoną</button>
+      <form id="manual-complete-form" method="post" asp-action="Complete" asp-route-id="@Model.Lesson.Id" class="m-0">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn-primary">@Localizer["Oznacz jako ukończoną"]</button>
+      </form>
+      <form id="auto-complete-form" method="post" asp-action="WatchCompleted" asp-route-id="@Model.Lesson.Id" class="hidden">
+        @Html.AntiForgeryToken()
       </form>
     }
   </div>
@@ -59,14 +65,38 @@
   <script>
     (function () {
       const video = document.getElementById('lesson-video');
-      const autoForm = document.getElementById('auto-complete-form');
+      const manualForm = document.getElementById('manual-complete-form');
       if (!video) return;
-      // Auto-complete only if the lesson is not yet completed
-      if (autoForm) {
-        video.addEventListener('ended', () => autoForm.submit());
-      }
+      // Auto-complete after watch (checks server preference) via hidden form submit (robust anti-forgery)
+      const autoForm = document.getElementById('auto-complete-form');
+      let autoSubmitted = false;
+      const submitAutoOnce = () => {
+        if (autoSubmitted) return;
+        autoSubmitted = true;
+        if (autoForm) autoForm.submit();
+      };
+      // Submit on ended
+      video.addEventListener('ended', () => { console.debug('video ended'); submitAutoOnce(); });
+      // Fallback: submit when >=98% obejrzane i zatrzymane bez fired 'ended'
+      const onTimeUpdate = () => {
+        try {
+          if (!video.duration || !isFinite(video.duration)) return;
+          const ratio = video.currentTime / video.duration;
+          if (ratio >= 0.985) { console.debug('timeupdate threshold met', ratio); submitAutoOnce(); }
+        } catch { /* ignore */ }
+      };
+      video.addEventListener('timeupdate', onTimeUpdate);
+      // Extra fallback on pause near end
+      video.addEventListener('pause', () => {
+        try {
+          if (!video.duration || !isFinite(video.duration)) return;
+          const ratio = video.currentTime / video.duration;
+          if (ratio >= 0.985) { console.debug('pause threshold met', ratio); submitAutoOnce(); }
+        } catch { /* ignore */ }
+      });
       // If server-side thumbnail is missing and we can capture a frame, do it client-side and persist
-      const hasServerPoster = !!video.getAttribute('poster') && !video.getAttribute('poster')!.includes('hero_pilates.svg');
+      const posterAttr = video.getAttribute('poster') || '';
+      const hasServerPoster = !!posterAttr && !posterAttr.includes('hero_pilates.svg');
       const canCapture = !!document.createElement('canvas').getContext;
       const tryCapture = async () => {
         try {
@@ -122,7 +152,7 @@
       setTimeout(tryCapture, 300);
 
       // UX: when user marks as completed, disable the button and show immediate confirmation
-      const completeForm = document.getElementById('auto-complete-form');
+      const completeForm = document.getElementById('manual-complete-form');
       if (completeForm) {
         completeForm.addEventListener('submit', () => {
           const btn = completeForm.querySelector('button[type="submit"]');

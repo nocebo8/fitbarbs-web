@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Mój profil" xml:space="preserve"><value>Mój profil</value></data>
+  <data name="Dostosuj sposób działania lekcji i propozycji treningów." xml:space="preserve"><value>Dostosuj sposób działania lekcji i propozycji treningów.</value></data>
+  <data name="Zapisano ustawienia." xml:space="preserve"><value>Zapisano ustawienia.</value></data>
+  <data name="Docelowy czas nauki (min/dzień)" xml:space="preserve"><value>Docelowy czas nauki (min/dzień)</value></data>
+  <data name="Zakres 5–180 minut dziennie." xml:space="preserve"><value>Zakres 5–180 minut dziennie.</value></data>
+  <data name="Preferowany poziom" xml:space="preserve"><value>Preferowany poziom</value></data>
+  <data name="Preferencje użytkownika" xml:space="preserve"><value>Preferencje użytkownika</value></data>
+  <data name="Automatycznie oznacz lekcję jako ukończoną po obejrzeniu" xml:space="preserve"><value>Automatycznie oznacz lekcję jako ukończoną po obejrzeniu</value></data>
+  <data name="Po obejrzeniu wideo lekcji automatycznie oznaczaj lekcję jako ukończoną." xml:space="preserve"><value>Po obejrzeniu wideo lekcji automatycznie oznaczaj lekcję jako ukończoną.</value></data>
+  <data name="Automatycznie odtwarzaj następną lekcję" xml:space="preserve"><value>Automatycznie odtwarzaj następną lekcję</value></data>
+  <data name="Podsumowanie postępów e‑mailem (tygodniowo)" xml:space="preserve"><value>Podsumowanie postępów e‑mailem (tygodniowo)</value></data>
+  <data name="Zapisz" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="Polecane dla Ciebie" xml:space="preserve"><value>Polecane dla Ciebie</value></data>
+  <data name="Zobacz" xml:space="preserve"><value>Zobacz</value></data>
+  <data name="Brak rekomendacji." xml:space="preserve"><value>Brak rekomendacji.</value></data>
+  <data name="Moje kursy" xml:space="preserve"><value>Moje kursy</value></data>
+</root>
+
+

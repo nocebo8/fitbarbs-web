@@ -283,6 +283,52 @@ public class LessonsController : Controller
         return RedirectToAction("Watch", new { id, completed = true });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WatchCompleted(int id)
+    {
+        // When video ended, mark as completed only if user preference allows
+        var lesson = await _dbContext.Lessons.Include(l => l.Course).FirstOrDefaultAsync(l => l.Id == id);
+        if (lesson == null) return NotFound();
+        var userId = _userManager.GetUserId(User)!;
+        var profile = await _dbContext.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        var autoEnabled = profile?.Preferences?.AutoCompleteLessonAfterWatch ?? true;
+        if (!autoEnabled)
+        {
+            return RedirectToAction("Watch", new { id });
+        }
+        // If auto-complete enabled, complete and optionally jump to next
+        // Inline idempotent completion (avoid double redirect recursion)
+        var progress = await _dbContext.UserCourseProgresses
+            .FirstOrDefaultAsync(p => p.CourseId == lesson.CourseId && p.UserId == userId);
+        if (progress == null)
+        {
+            progress = new UserCourseProgress
+            {
+                CourseId = lesson.CourseId,
+                UserId = userId,
+                CurrentLessonId = id,
+                CompletionPercent = 0
+            };
+            _dbContext.UserCourseProgresses.Add(progress);
+        }
+        var lessons = await _dbContext.Lessons.Where(l => l.CourseId == lesson.CourseId).OrderBy(l => l.OrderIndex).ToListAsync();
+        var nextLesson = lessons.SkipWhile(l => l.Id != id).Skip(1).FirstOrDefault();
+        progress.CurrentLessonId = nextLesson?.Id;
+        var completedCount = lessons.TakeWhile(l => l.Id != (nextLesson?.Id ?? 0)).Count();
+        progress.CompletionPercent = (int)Math.Round((double)completedCount / Math.Max(lessons.Count, 1) * 100);
+        await _dbContext.SaveChangesAsync();
+        var playNext = profile?.Preferences?.PlayNextAutomatically ?? false;
+        if (playNext)
+        {
+            if (nextLesson != null)
+            {
+                return RedirectToAction("Watch", new { id = nextLesson.Id });
+            }
+        }
+        return RedirectToAction("Watch", new { id, completed = true });
+    }
+
     [Authorize(Roles = ApplicationRoles.Instructor)]
     [HttpGet]
     public IActionResult Create(int courseId)

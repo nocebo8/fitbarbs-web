@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+// Zasada: Po każdej zmianie w aplikacji należy ją przeładować i sprawdzić, czy działa poprawnie.
+// 1. Po wprowadzeniu zmian uruchom ponownie aplikację (np. dotnet watch run, npm run dev, itp.).
+// 2. Zweryfikuj w logach, czy nie pojawiły się błędy podczas startu.
+// 3. Przetestuj kluczowe funkcjonalności aplikacji manualnie lub uruchom testy automatyczne.
+// 4. Jeśli pojawią się błędy, napraw je przed dalszymi zmianami.

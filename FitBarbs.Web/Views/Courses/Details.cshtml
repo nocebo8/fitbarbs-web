@@ -39,8 +39,10 @@
         </div>
     }
     <ul class="list-none p-0 m-0 mt-3">
+      @{ var completed = (ViewBag.CompletedLessonIds as System.Collections.Generic.HashSet<int>) ?? new System.Collections.Generic.HashSet<int>(); }
       @foreach (var lesson in Model.Lessons.OrderBy(l => l.OrderIndex))
       {
+        var isDone = completed.Contains(lesson.Id);
         <li class="py-4 px-3 border-b border-[var(--fb-border)] flex items-start justify-between gap-4">
           <div class="flex items-start gap-3">
             <img src="@(string.IsNullOrWhiteSpace(lesson.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : lesson.ThumbnailPath)"
@@ -50,13 +52,25 @@
                  srcset="@(string.IsNullOrWhiteSpace(lesson.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : lesson.ThumbnailPath) 1x, @(string.IsNullOrWhiteSpace(lesson.ThumbnailPath) ? (Model.ThumbnailPath ?? Url.Content("/img/hero_pilates.svg")) : lesson.ThumbnailPath) 2x"
                  sizes="(max-width: 768px) 96px, 96px" />
             <div>
-              <div class="font-semibold">@lesson.OrderIndex. @lesson.Title</div>
+              <div class="font-semibold flex items-center gap-2">
+                <span>@lesson.OrderIndex. @lesson.Title</span>
+                @if (isDone)
+                {
+                  <span class="badge">Ukończona</span>
+                }
+              </div>
               <div class="text-sm text-[color:var(--fb-muted)] mt-0.5">@lesson.Description</div>
             </div>
           </div>
-          <a class="btn-secondary self-center" href="@Url.Action("Watch", "Lessons", new { id = lesson.Id })">
-            Oglądaj
-          </a>
+          <div class="flex items-center gap-2 self-center">
+            @if (isDone)
+            {
+              <span class="text-xs text-[color:var(--fb-muted)]">Obejrzana</span>
+            }
+            <a class="btn-secondary" href="@Url.Action("Watch", "Lessons", new { id = lesson.Id })">
+              Oglądaj
+            </a>
+          </div>
         </li>
       }
       @if (!Model.Lessons.Any())

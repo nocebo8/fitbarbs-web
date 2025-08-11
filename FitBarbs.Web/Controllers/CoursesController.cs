@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FitBarbs.Web.Controllers;
 
@@ -94,6 +95,39 @@ public class CoursesController : Controller
             }
         }
         await _dbContext.SaveChangesAsync();
+
+        // Compute completed lessons for current user (sequential model)
+        var orderedLessons = course.Lessons.OrderBy(l => l.OrderIndex).ToList();
+        var completedLessonIds = new HashSet<int>();
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var progress = await _dbContext.UserCourseProgresses
+                    .FirstOrDefaultAsync(p => p.CourseId == id && p.UserId == userId);
+                if (progress != null)
+                {
+                    if (progress.CurrentLessonId == null)
+                    {
+                        // All lessons completed
+                        foreach (var lesson in orderedLessons)
+                        {
+                            completedLessonIds.Add(lesson.Id);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var lesson in orderedLessons)
+                        {
+                            if (lesson.Id == progress.CurrentLessonId) break;
+                            completedLessonIds.Add(lesson.Id);
+                        }
+                    }
+                }
+            }
+        }
+        ViewBag.CompletedLessonIds = completedLessonIds;
         return View(course);
     }
 

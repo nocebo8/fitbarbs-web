@@ -11,6 +11,8 @@ public class LessonWatchViewModel
     public int CurrentLessonIndex { get; set; }
 
     public int TotalLessons { get; set; }
+
+    public bool IsCompleted { get; set; }
 }
 
 

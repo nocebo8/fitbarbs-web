@@ -28,6 +28,55 @@ public class LessonsController : Controller
         public string? ContentType { get; set; }
     }
 
+    // Dev-only helper to mark a lesson as completed for a given user (by email)
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("dev/mark-complete/{id}")]
+    public async Task<IActionResult> DevMarkComplete(int id, string? email = null)
+    {
+        if (!_env.IsDevelopment()) return Forbid();
+        var lesson = await _dbContext.Lessons.Include(l => l.Course).FirstOrDefaultAsync(l => l.Id == id);
+        if (lesson == null) return NotFound();
+
+        IdentityUser? user;
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            user = await _userManager.FindByEmailAsync(email);
+        }
+        else
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                return BadRequest("Provide email when not authenticated");
+            }
+            user = await _userManager.GetUserAsync(User);
+        }
+        if (user == null) return NotFound("User not found");
+
+        var userId = user.Id;
+        var progress = await _dbContext.UserCourseProgresses
+            .FirstOrDefaultAsync(p => p.CourseId == lesson.CourseId && p.UserId == userId);
+        if (progress == null)
+        {
+            progress = new UserCourseProgress
+            {
+                CourseId = lesson.CourseId,
+                UserId = userId,
+                CurrentLessonId = id,
+                CompletionPercent = 0
+            };
+            _dbContext.UserCourseProgresses.Add(progress);
+        }
+
+        var lessons = await _dbContext.Lessons.Where(l => l.CourseId == lesson.CourseId).OrderBy(l => l.OrderIndex).ToListAsync();
+        var nextLesson = lessons.SkipWhile(l => l.Id != id).Skip(1).FirstOrDefault();
+        progress.CurrentLessonId = nextLesson?.Id;
+        var completedCount = lessons.TakeWhile(l => l.Id != (nextLesson?.Id ?? 0)).Count();
+        progress.CompletionPercent = (int)Math.Round((double)completedCount / Math.Max(lessons.Count, 1) * 100);
+        await _dbContext.SaveChangesAsync();
+        return Ok(new { user = user.Email, courseId = lesson.CourseId, currentLessonId = progress.CurrentLessonId, completion = progress.CompletionPercent });
+    }
+
     private async Task<string?> TryGenerateVideoThumbnailAsync(string videoPhysicalPath)
     {
         try
@@ -132,7 +181,7 @@ public class LessonsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Watch(int id)
+    public async Task<IActionResult> Watch(int id, bool completed = false)
     {
         var lesson = await _dbContext.Lessons.Include(l => l.Course).FirstOrDefaultAsync(l => l.Id == id);
         if (lesson == null) return NotFound();
@@ -169,13 +218,33 @@ public class LessonsController : Controller
 
         var tips = GenerateTipsForLesson(lesson);
 
+        // Determine if current lesson is already completed for this user
+        var isCompleted = false;
+        if (progress != null)
+        {
+            if (!progress.CurrentLessonId.HasValue)
+            {
+                isCompleted = true; // entire course done
+            }
+            else
+            {
+                // Completed if this lesson comes before the current lesson pointer
+                var currentIdx = lessons.FindIndex(l => l.Id == (progress.CurrentLessonId ?? 0));
+                isCompleted = currentIdx > index; // any earlier lessons are done
+            }
+        }
+
+        // Respect explicit completion flag from redirect to avoid any race or cache issues
+        isCompleted = isCompleted || completed;
+
         var vm = new LessonWatchViewModel
         {
             Lesson = lesson,
             Tips = tips,
             CompletionPercent = completionPercent,
             CurrentLessonIndex = index + 1,
-            TotalLessons = lessons.Count
+            TotalLessons = lessons.Count,
+            IsCompleted = isCompleted
         };
         return View(vm);
     }
@@ -210,12 +279,8 @@ public class LessonsController : Controller
         progress.CompletionPercent = (int)Math.Round((double)completedCount / Math.Max(lessons.Count, 1) * 100);
 
         await _dbContext.SaveChangesAsync();
-        // After completion, redirect to next lesson if exists; otherwise back to course
-        if (progress.CurrentLessonId.HasValue)
-        {
-            return RedirectToAction("Watch", new { id = progress.CurrentLessonId.Value });
-        }
-        return RedirectToAction("Details", "Courses", new { id = lesson.CourseId });
+        // After completion, stay on the same lesson to allow repeating; also pass a hint flag
+        return RedirectToAction("Watch", new { id, completed = true });
     }
 
     [Authorize(Roles = ApplicationRoles.Instructor)]

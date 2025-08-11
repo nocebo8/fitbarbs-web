@@ -19,9 +19,9 @@
 
   @* Responsywne wideo z zaokrągleniami, cieniem i obramowaniem *@
   <div class="mt-4 mx-auto w-full max-w-5xl rounded-2xl overflow-hidden shadow-soft border border-[var(--fb-border)] bg-[color:var(--fb-border)]">
-    <video id="lesson-video" class="w-full aspect-[16/9]"
-           controls playsinline preload="metadata" poster="@(string.IsNullOrWhiteSpace(Model.Lesson.ThumbnailPath) ? Url.Content("/img/hero_pilates.svg") : Url.Content(Model.Lesson.ThumbnailPath))"
-           src="@Model.Lesson.VideoPath"></video>
+    <video id="lesson-video" class="w-full aspect-[16/9]" controls playsinline preload="metadata" poster="@(string.IsNullOrWhiteSpace(Model.Lesson.ThumbnailPath) ? Url.Content("/img/hero_pilates.svg") : Url.Content(Model.Lesson.ThumbnailPath))">
+      <source src="@Model.Lesson.VideoPath" type="video/mp4" />
+    </video>
   </div>
 
   @* Subtelny pasek postępu kursu *@
@@ -53,7 +53,11 @@
     else
     {
       <form id="manual-complete-form" method="post" asp-action="Complete" asp-route-id="@Model.Lesson.Id" class="m-0">
+        @Html.AntiForgeryToken()
         <button type="submit" class="btn-primary">@Localizer["Oznacz jako ukończoną"]</button>
+      </form>
+      <form id="auto-complete-form" method="post" asp-action="WatchCompleted" asp-route-id="@Model.Lesson.Id" class="hidden">
+        @Html.AntiForgeryToken()
       </form>
     }
   </div>
@@ -63,17 +67,36 @@
       const video = document.getElementById('lesson-video');
       const manualForm = document.getElementById('manual-complete-form');
       if (!video) return;
-      // Auto-complete after watch (checks server preference)
-      const autoUrl = '@Url.Action("WatchCompleted","Lessons", new { id = Model.Lesson.Id })';
-      video.addEventListener('ended', () => {
-        // Prefer fetch POST to avoid navigation if not allowed
-        const token = '@Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken';
-        fetch(autoUrl, { method: 'POST', headers: { 'RequestVerificationToken': token } })
-          .then(() => { window.location.reload(); })
-          .catch(() => { if (manualForm) manualForm.submit(); });
+      // Auto-complete after watch (checks server preference) via hidden form submit (robust anti-forgery)
+      const autoForm = document.getElementById('auto-complete-form');
+      let autoSubmitted = false;
+      const submitAutoOnce = () => {
+        if (autoSubmitted) return;
+        autoSubmitted = true;
+        if (autoForm) autoForm.submit();
+      };
+      // Submit on ended
+      video.addEventListener('ended', () => { console.debug('video ended'); submitAutoOnce(); });
+      // Fallback: submit when >=98% obejrzane i zatrzymane bez fired 'ended'
+      const onTimeUpdate = () => {
+        try {
+          if (!video.duration || !isFinite(video.duration)) return;
+          const ratio = video.currentTime / video.duration;
+          if (ratio >= 0.985) { console.debug('timeupdate threshold met', ratio); submitAutoOnce(); }
+        } catch { /* ignore */ }
+      };
+      video.addEventListener('timeupdate', onTimeUpdate);
+      // Extra fallback on pause near end
+      video.addEventListener('pause', () => {
+        try {
+          if (!video.duration || !isFinite(video.duration)) return;
+          const ratio = video.currentTime / video.duration;
+          if (ratio >= 0.985) { console.debug('pause threshold met', ratio); submitAutoOnce(); }
+        } catch { /* ignore */ }
       });
       // If server-side thumbnail is missing and we can capture a frame, do it client-side and persist
-      const hasServerPoster = !!video.getAttribute('poster') && !video.getAttribute('poster')!.includes('hero_pilates.svg');
+      const posterAttr = video.getAttribute('poster') || '';
+      const hasServerPoster = !!posterAttr && !posterAttr.includes('hero_pilates.svg');
       const canCapture = !!document.createElement('canvas').getContext;
       const tryCapture = async () => {
         try {

@@ -292,17 +292,35 @@ public class LessonsController : Controller
         if (lesson == null) return NotFound();
         var userId = _userManager.GetUserId(User)!;
         var profile = await _dbContext.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
-        if (profile?.Preferences?.AutoCompleteLessonAfterWatch != true)
+        var autoEnabled = profile?.Preferences?.AutoCompleteLessonAfterWatch ?? true;
+        if (!autoEnabled)
         {
             return RedirectToAction("Watch", new { id });
         }
         // If auto-complete enabled, complete and optionally jump to next
-        // Call completion logic idempotently
-        await Complete(id);
-        if (profile?.Preferences?.PlayNextAutomatically == true)
+        // Inline idempotent completion (avoid double redirect recursion)
+        var progress = await _dbContext.UserCourseProgresses
+            .FirstOrDefaultAsync(p => p.CourseId == lesson.CourseId && p.UserId == userId);
+        if (progress == null)
         {
-            var lessons = await _dbContext.Lessons.Where(l => l.CourseId == lesson.CourseId).OrderBy(l => l.OrderIndex).ToListAsync();
-            var nextLesson = lessons.SkipWhile(l => l.Id != id).Skip(1).FirstOrDefault();
+            progress = new UserCourseProgress
+            {
+                CourseId = lesson.CourseId,
+                UserId = userId,
+                CurrentLessonId = id,
+                CompletionPercent = 0
+            };
+            _dbContext.UserCourseProgresses.Add(progress);
+        }
+        var lessons = await _dbContext.Lessons.Where(l => l.CourseId == lesson.CourseId).OrderBy(l => l.OrderIndex).ToListAsync();
+        var nextLesson = lessons.SkipWhile(l => l.Id != id).Skip(1).FirstOrDefault();
+        progress.CurrentLessonId = nextLesson?.Id;
+        var completedCount = lessons.TakeWhile(l => l.Id != (nextLesson?.Id ?? 0)).Count();
+        progress.CompletionPercent = (int)Math.Round((double)completedCount / Math.Max(lessons.Count, 1) * 100);
+        await _dbContext.SaveChangesAsync();
+        var playNext = profile?.Preferences?.PlayNextAutomatically ?? false;
+        if (playNext)
+        {
             if (nextLesson != null)
             {
                 return RedirectToAction("Watch", new { id = nextLesson.Id });

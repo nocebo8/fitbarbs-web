@@ -16,7 +16,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization();
 
 // In development, allow insecure cookies so login works over HTTP (localhost)
 if (builder.Environment.IsDevelopment())
@@ -61,6 +63,13 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+var supportedCultures = new[] { "pl-PL", "pl" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("pl-PL")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+app.UseRequestLocalization(localizationOptions);
 
 app.UseAuthentication();
 app.UseAuthorization();

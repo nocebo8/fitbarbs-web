@@ -25,7 +25,7 @@ public partial class ProfileController : Controller
     {
         var userId = _userManager.GetUserId(User)!;
         var profile = await _dbContext.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId)
-                      ?? new UserProfile { UserId = userId, TargetDailyMinutes = 20 };
+                      ?? new UserProfile { UserId = userId, TargetDailyMinutes = 20, Preferences = new UserPreferences() };
 
         var myEnrollments = await _dbContext.Enrollments.Include(e => e.Course).Where(e => e.UserId == userId).ToListAsync();
         var progresses = await _dbContext.UserCourseProgresses.Where(p => p.UserId == userId).ToListAsync();
@@ -44,19 +44,30 @@ public partial class ProfileController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(UserProfile model)
+    public async Task<IActionResult> Index(ProfileViewModel vm)
     {
         var userId = _userManager.GetUserId(User)!;
         var existing = await _dbContext.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         if (existing == null)
         {
+            var model = vm.Profile ?? new UserProfile();
             model.UserId = userId;
+            if (model.Preferences == null) model.Preferences = new UserPreferences();
             _dbContext.UserProfiles.Add(model);
         }
         else
         {
+            var model = vm.Profile ?? new UserProfile();
             existing.TargetDailyMinutes = model.TargetDailyMinutes;
             existing.PreferredDifficulty = model.PreferredDifficulty;
+            // Update nested preferences (idempotent)
+            if (existing.Preferences == null)
+            {
+                existing.Preferences = new UserPreferences();
+            }
+            existing.Preferences.AutoCompleteLessonAfterWatch = model.Preferences?.AutoCompleteLessonAfterWatch ?? existing.Preferences.AutoCompleteLessonAfterWatch;
+            existing.Preferences.PlayNextAutomatically = model.Preferences?.PlayNextAutomatically ?? existing.Preferences.PlayNextAutomatically;
+            existing.Preferences.EmailProgressSummaries = model.Preferences?.EmailProgressSummaries ?? existing.Preferences.EmailProgressSummaries;
         }
         await _dbContext.SaveChangesAsync();
         TempData["Saved"] = true;

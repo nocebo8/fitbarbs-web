@@ -283,6 +283,34 @@ public class LessonsController : Controller
         return RedirectToAction("Watch", new { id, completed = true });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> WatchCompleted(int id)
+    {
+        // When video ended, mark as completed only if user preference allows
+        var lesson = await _dbContext.Lessons.Include(l => l.Course).FirstOrDefaultAsync(l => l.Id == id);
+        if (lesson == null) return NotFound();
+        var userId = _userManager.GetUserId(User)!;
+        var profile = await _dbContext.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        if (profile?.Preferences?.AutoCompleteLessonAfterWatch != true)
+        {
+            return RedirectToAction("Watch", new { id });
+        }
+        // If auto-complete enabled, complete and optionally jump to next
+        // Call completion logic idempotently
+        await Complete(id);
+        if (profile?.Preferences?.PlayNextAutomatically == true)
+        {
+            var lessons = await _dbContext.Lessons.Where(l => l.CourseId == lesson.CourseId).OrderBy(l => l.OrderIndex).ToListAsync();
+            var nextLesson = lessons.SkipWhile(l => l.Id != id).Skip(1).FirstOrDefault();
+            if (nextLesson != null)
+            {
+                return RedirectToAction("Watch", new { id = nextLesson.Id });
+            }
+        }
+        return RedirectToAction("Watch", new { id, completed = true });
+    }
+
     [Authorize(Roles = ApplicationRoles.Instructor)]
     [HttpGet]
     public IActionResult Create(int courseId)
